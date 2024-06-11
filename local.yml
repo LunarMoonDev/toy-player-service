@@ -17,8 +17,8 @@ services:
         USER_GROUP_NAME: workspace
         USER_UID: 1019
         USER_GID: 1019
-    image: parse_logs_local_java
-    container_name: parse_logs_local_java
+    image: toy_player_service_java
+    container_name: toy_player_service_java
     depends_on:
       - mysql
     volumes:
