@@ -1,20 +1,11 @@
-FROM gradle:8.7.0-jdk17-jammy as cache
-
-# build gradle libraries
-RUN mkdir -p /home/gradle/cache_home
-ENV GRADLE_USER_HOME /home/gradle/cache_home
-COPY ./parse-logs/build.gradle /home/gradle/java-code/
-WORKDIR /home/gradle/java-code
-RUN gradle clean build -i --stacktrace
-
 FROM openjdk:17-oraclelinux8
 
-# create user and install linux tools
+# install tools and create user as root
 ARG USERNAME=vscode
 ARG USER_GROUP_NAME=workspace
 ARG USER_UID=1019
 ARG USER_GID=1000
-ARG PKG="git vim curl unzip zip sudo findutils"
+ARG PKG="git vim curl unzip zip sudo findutils wget"
 
 SHELL ["/bin/bash", "-c"]
 
@@ -25,29 +16,30 @@ RUN microdnf update \
     && echo %${USERNAME} ALL=\(ALL\) NOPASSWD:ALL > /etc/sudoers.d/${USER_GROUP_NAME} \
     && chmod 0440 /etc/sudoers.d/${USER_GROUP_NAME}
 
-# copy gradle libraries
-COPY --from=cache /home/gradle/cache_home /home/${USERNAME}/.gradle
+RUN wget -q https://services.gradle.org/distributions/gradle-8.8-bin.zip \
+    && unzip gradle-8.8-bin.zip -d /opt \
+    && rm gradle-8.8-bin.zip
 
-# create vscode extension folder
+ENV GRADLE_HOME /opt/gradle-8.8
+ENV PATH $PATH:/opt/gradle-8.8/bin
+
+# prepare workspace as vscode
+USER ${USERNAME}
 RUN mkdir -p /home/${USERNAME}/.vscode-server/extensions \
     && chown -R ${USERNAME} \
     /home/${USERNAME}/.vscode-server
 
-# copy gradle and download gradle wrapper 8.7
 ARG APP_HOME=/app
-WORKDIR ${APP_HOME}/parse-logs
+WORKDIR ${APP_HOME}/toy-player-service
 
-COPY ./parse-logs/gradlew ${APP_HOME}/parse-logs/gradlew
-COPY ./parse-logs/gradlew.bat ${APP_HOME}/parse-logs/gradlew.bat
-COPY ./parse-logs/build.gradle ${APP_HOME}/parse-logs/build.gradle
-COPY ./parse-logs/settings.gradle ${APP_HOME}/parse-logs/settings.gradle
-COPY ./parse-logs/gradle ${APP_HOME}/parse-logs/gradle
-COPY ./parse-logs/.gradle ${APP_HOME}/.gradle
-RUN ${APP_HOME}/parse-logs/gradlew build --stacktrace
+COPY ./toy-player-service/build.gradle ${APP_HOME}/toy-player-service/build.gradle
+COPY ./toy-player-service/settings.gradle ${APP_HOME}/toy-player-service/settings.gradle
+RUN gradle build --stacktrace
 
-# prepare workdir
 COPY . ${APP_HOME}
 
+# Prepare entrypoints as root
+USER root
 COPY ./compose/production/spring/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
 RUN chmod +x /entrypoint
