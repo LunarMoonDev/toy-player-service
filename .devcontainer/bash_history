@@ -1,0 +1,1 @@
+ cd /app/toy-player-service ; /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_3bq6s89ov1l0i3x85ump73rha.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
