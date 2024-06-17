@@ -1,0 +1,8 @@
+# MySQL
+# ------------------------------------------------------------------------------
+MYSQL_ROOT_HOST=localhost
+MYSQL_ROOT_PORT=3306
+MYSQL_DATABASE=parse_logs
+MYSQL_USER=harjit
+MYSQL_PASSWORD=gyat
+MYSQL_ROOT_PASSWORD=suppo
