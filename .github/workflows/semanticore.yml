@@ -20,7 +20,7 @@ jobs:
       - name: Semanticore
         run: go run github.com/aoepeople/semanticore@v0
         env:
-          SEMANTICORE_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          SEMANTICORE_TOKEN: ${{secrets.PAT}}
           GIT_AUTHOR_NAME: 'Harjit Brar'
           GIT_AUTHOR_EMAIL: 'workandresearchbrar@gmail.com'
           GIT_COMMITTER_NAME: 'Harjit Brar'
