@@ -31,7 +31,9 @@
                 "vscjava.vscode-java-pack",
                 "vmware.vscode-boot-dev-pack",
                 "vscjava.vscode-gradle",
-                "redhat.java"
+                "redhat.java",
+                "naco-siren.gradle-language",
+                "george-alisson.html-preview-vscode"
             ]
         }
     },
