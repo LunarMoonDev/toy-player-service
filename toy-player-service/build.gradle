@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.2.6'
 	id 'io.spring.dependency-management' version '1.1.5'
 	id "io.freefair.lombok" version "8.6"
+	id "jacoco"
 }
 
 group = 'com.project'
@@ -21,6 +22,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -36,3 +38,58 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+test {
+    finalizedBy jacocoTestReport
+
+    testLogging {
+       events "failed", "passed", "skipped", "standardError","standardOut", "started"
+    }
+}
+
+jacocoTestReport {
+	dependsOn test
+
+	reports {
+        xml {
+            enabled true
+        }
+
+        html {
+            enabled true
+        }
+    }
+
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ['**/config/**', 
+					'**/dto/**', 
+					'**/entity/**', 
+					'**/exceptions/**',
+                    '**/enums/**',
+                    '**/ToyPlayerServiceApplication*'])
+        })
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.5
+            }
+        }
+
+        rule {
+            enabled = false
+            element = 'CLASS'
+            includes = ['com.project.toy_player_service.*']
+
+            limit {
+                counter = 'LINE'
+                value = 'TOTALCOUNT'
+                maximum = 0.3
+            }
+        }
+    }
+}
