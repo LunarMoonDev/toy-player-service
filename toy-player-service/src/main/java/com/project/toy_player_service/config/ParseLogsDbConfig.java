@@ -26,7 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "parseLogsEntityManagerFactoryTransactionManager",
-        basePackages = "com.project.toy_project_service.repository",
+        basePackages = "com.project.toy_player_service.repository",
         transactionManagerRef = "parseLogsPlatformTransactionManager")
 public class ParseLogsDbConfig {
 
@@ -57,7 +57,7 @@ public class ParseLogsDbConfig {
         properties.put("hibernate.implicit_naming_strategy",
                 SpringImplicitNamingStrategy.class.getName());
 
-        return builder.dataSource(dataSource).packages("com.project.toy_project_service.entity")
+        return builder.dataSource(dataSource).packages("com.project.toy_player_service.entity")
                 .persistenceUnit("parseLogsPlatformTransactionManager").properties(properties)
                 .build();
     }

@@ -34,6 +34,6 @@ public class Player {
     @Column(name = "server")
     private String server;
 
-    @Column(name = "class")
+    @Column(name = "job")
     private String job;
 }

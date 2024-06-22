@@ -4,7 +4,7 @@
 #
 
 # persistent bash history
-HISTFILE=~/home/vscode/.bash_history
+HISTFILE=/home/vscode/.bash_history
 
 # Avoid duplicates
 HISTCONTROL=ignoredups:erasedups
