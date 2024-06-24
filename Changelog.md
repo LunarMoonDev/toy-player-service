@@ -1,5 +1,24 @@
 # Changelog
 
+## Version v0.3.0 (2024-06-24)
+
+### Features
+
+- added endpoint to player delete api (8aee7a20)
+- added mapper to PlayerDeleteResponseDTO (74106355)
+- added service to delete players (2fa62750)
+- added dao method to delete player by ids (7f0a2e07)
+- added new success for player delete api (1407be56)
+- added DTO for player delete api (a34504b1)
+
+### Tests
+
+- added unit test for player delete api (d91e0a95)
+
+### Chores and tidying
+
+- added commands used to implement delete api (70bc0c70)
+
 ## Version v0.2.0 (2024-06-22)
 
 ### Features
