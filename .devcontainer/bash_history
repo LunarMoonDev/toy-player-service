@@ -5,3 +5,7 @@ gradle test
 gradle test -i
 gradle cleanTest test
 git status
+ /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_17fnb8yzeokpnn4pgr9yx93nz.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+gradle cleanTest test
+cd toy-player-service/
+gradle cleanTest test

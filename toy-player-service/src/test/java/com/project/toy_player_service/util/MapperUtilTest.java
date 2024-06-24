@@ -8,8 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
+import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
 import com.project.toy_player_service.enums.Errors;
+import com.project.toy_player_service.enums.Success;
 import com.project.toy_player_service.exceptions.GenericException;
 
 public class MapperUtilTest {
@@ -43,5 +45,18 @@ public class MapperUtilTest {
         assertNotNull(responseDTO);
         assertEquals(error.getCode(), responseDTO.getCode());
         assertEquals(error.getMessage(), responseDTO.getMessage());
+    }
+
+    @Test
+    public void testToPlayerDeleteResponseDTO() {
+        Success success = Success.PLAYER_DELETE_SUCCESS;
+        Integer total = 2;
+
+        PlayerDeleteResponseDTO responseDTO = MapperUtil.toPlayerDeleteResponseDTO(total, success);
+
+        assertNotNull(responseDTO);
+        assertEquals(success.getCode(), responseDTO.getCode());
+        assertEquals(success.getMessage(), responseDTO.getMessage());
+        assertEquals(total, responseDTO.getTotal());
     }
 }

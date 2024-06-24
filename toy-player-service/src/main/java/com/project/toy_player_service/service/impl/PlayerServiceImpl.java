@@ -2,7 +2,10 @@ package com.project.toy_player_service.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
 import com.project.toy_player_service.enums.Errors;
 import com.project.toy_player_service.enums.Success;
@@ -29,11 +32,27 @@ public class PlayerServiceImpl implements PlayerService {
                 .doOnError(error -> {
                     log.error("X-Tracker: {} | specific exception: {}", uuid, error.getMessage());
 
-                    if(error.getMessage().contains("unique")) {
+                    if (error.getMessage().contains("unique")) {
                         throw new GenericException(Errors.PLAYER_UNIQUE);
                     }
                 })
                 .map(player -> MapperUtil.toPlayerResponseDTO(Success.PLAYER_CREATE_SUCCESS))
                 .doOnNext(response -> log.info("X-Tracker: {} | Success in creating player", uuid));
+    }
+
+    @Override
+    public Mono<PlayerDeleteResponseDTO> deletePlayers(String uuid, PlayerDeleteRequestDTO payload)
+            throws GenericException {
+        log.info("X-Tracker: {} | Delete players for the given ids", uuid);
+        log.debug("X-Tracker: {} | request payload: {}", payload);
+
+        return Mono.fromCallable(() -> repository.deleteByIdIn(payload.getIds()))
+                .doOnError(error -> {
+                    log.error("X-Tracker: {} | specific exception: {}", uuid, error.getMessage());
+
+                    throw new GenericException(Errors.SERVICE_ERROR);
+                })
+                .map(total -> MapperUtil.toPlayerDeleteResponseDTO(total, Success.PLAYER_DELETE_SUCCESS))
+                .doOnNext(response -> log.info("X-Tracker: {} | Success in deleting players", uuid));
     }
 }

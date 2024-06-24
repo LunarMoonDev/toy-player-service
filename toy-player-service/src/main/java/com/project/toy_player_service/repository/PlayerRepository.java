@@ -6,9 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.toy_player_service.entity.Player;
 
+import java.util.List;
 import java.math.BigInteger;
 
 @Repository
 @Transactional
 public interface PlayerRepository extends JpaRepository<Player, BigInteger>{
+    Integer deleteByIdIn(List<BigInteger> ids);
 }

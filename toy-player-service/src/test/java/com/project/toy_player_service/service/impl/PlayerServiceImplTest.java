@@ -13,13 +13,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
 import com.project.toy_player_service.entity.Player;
 import com.project.toy_player_service.enums.Errors;
 import com.project.toy_player_service.enums.Success;
 import com.project.toy_player_service.exceptions.GenericException;
 import com.project.toy_player_service.repository.PlayerRepository;
+
+import java.util.Collections;
+import java.math.BigInteger;
 
 public class PlayerServiceImplTest {
     @InjectMocks
@@ -49,6 +54,12 @@ public class PlayerServiceImplTest {
                 .lastName("last")
                 .job("job")
                 .server("server")
+                .build();
+    }
+
+    private PlayerDeleteRequestDTO createPlayerDeleteRequestDTO() {
+        return PlayerDeleteRequestDTO.builder()
+                .ids(Collections.singletonList(BigInteger.ONE))
                 .build();
     }
 
@@ -101,5 +112,36 @@ public class PlayerServiceImplTest {
 
         assertNotNull(exception);
         assertEquals("non-uniq", exception.getMessage());
+    }
+
+    @Test
+    public void testDeletePlayers_Success() {
+        PlayerDeleteRequestDTO requestDTO = createPlayerDeleteRequestDTO();
+        String uuid = createUuid();
+
+        when(repository.deleteByIdIn(requestDTO.getIds())).thenReturn(2);
+
+        PlayerDeleteResponseDTO response = service.deletePlayers(uuid, requestDTO).block();
+
+        assertNotNull(response);
+        assertEquals(Success.PLAYER_DELETE_SUCCESS.getCode(), response.getCode());
+        assertEquals(Success.PLAYER_DELETE_SUCCESS.getMessage(), response.getMessage());
+        assertEquals(2, response.getTotal());
+    }
+
+    @Test
+    public void testDeletePlayer_RuntimeFail() {
+        PlayerDeleteRequestDTO requestDTO = createPlayerDeleteRequestDTO();
+        String uuid = createUuid();
+
+        when(repository.deleteByIdIn(requestDTO.getIds())).thenThrow(new RuntimeException("some-error"));
+
+        GenericException exception = assertThrows(GenericException.class,() -> {
+            service.deletePlayers(uuid, requestDTO).block();
+        });
+
+        assertNotNull(exception);
+        assertEquals(Errors.SERVICE_ERROR.getCode(), exception.getCode());
+        assertEquals(Errors.SERVICE_ERROR.getMessage(), exception.getMessage());
     }
 }
