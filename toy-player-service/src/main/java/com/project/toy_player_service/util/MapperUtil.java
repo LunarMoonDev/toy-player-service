@@ -1,6 +1,7 @@
 package com.project.toy_player_service.util;
 
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
 import com.project.toy_player_service.entity.Player;
 import com.project.toy_player_service.enums.Errors;
@@ -36,6 +37,14 @@ public class MapperUtil {
         return PlayerResponseDTO.builder()
                 .code(exception.getCode())
                 .message(exception.getMessage())
+                .build();
+    }
+
+    public static PlayerDeleteResponseDTO toPlayerDeleteResponseDTO(Integer total, Success success) {
+        return PlayerDeleteResponseDTO.builder()
+                .code(success.getCode())
+                .message(success.getMessage())
+                .total(total)
                 .build();
     }
 }
