@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import com.project.toy_player_service.controller.v1.PlayerController;
 import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
 import com.project.toy_player_service.service.PlayerService;
@@ -67,8 +68,22 @@ public class PlayerControllerTest {
                 .build();
     }
 
+    private PlayerDTO createPlayerDTO(){
+        return PlayerDTO.builder()
+            .firstName("first")
+            .lastName("last")
+            .id(createPlayerId())
+            .job("job")
+            .server("server")
+            .build();
+    }
+
     private String createUuid() {
         return "Sample";
+    }
+
+    private BigInteger createPlayerId() {
+        return BigInteger.ONE;
     }
 
     // tests
@@ -103,4 +118,22 @@ public class PlayerControllerTest {
         assertEquals(2, response.getBody().getTotal());
     }
 
+
+    @Test
+    public void testPlayerDetails_Success() {
+        BigInteger id = createPlayerId();
+        String uuid = createUuid();
+        PlayerDTO playerDTO = createPlayerDTO();
+
+        when(service.getPlayer(uuid, id)).thenReturn(Mono.just(playerDTO));
+
+        ResponseEntity<PlayerDTO> response = controller.playerDetails(uuid, id).block();
+
+        assertNotNull(response);
+        assertEquals(playerDTO.getFirstName(), response.getBody().getFirstName());
+        assertEquals(playerDTO.getLastName(), response.getBody().getLastName());
+        assertEquals(playerDTO.getId(), response.getBody().getId());
+        assertEquals(playerDTO.getServer(), response.getBody().getServer());
+        assertEquals(playerDTO.getJob(), response.getBody().getJob());
+    }
 }

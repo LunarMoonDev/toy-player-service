@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 
 import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
 import com.project.toy_player_service.entity.Player;
@@ -24,6 +25,7 @@ import com.project.toy_player_service.exceptions.GenericException;
 import com.project.toy_player_service.repository.PlayerRepository;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.math.BigInteger;
 
 public class PlayerServiceImplTest {
@@ -65,6 +67,10 @@ public class PlayerServiceImplTest {
 
     private String createUuid() {
         return "Sample";
+    }
+
+    private BigInteger createPlayerId() {
+        return BigInteger.ONE;
     }
 
     // tests
@@ -138,6 +144,56 @@ public class PlayerServiceImplTest {
 
         GenericException exception = assertThrows(GenericException.class,() -> {
             service.deletePlayers(uuid, requestDTO).block();
+        });
+
+        assertNotNull(exception);
+        assertEquals(Errors.SERVICE_ERROR.getCode(), exception.getCode());
+        assertEquals(Errors.SERVICE_ERROR.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void testGetPlayer_Success() {
+        Player player = createPlayer();
+        String uuid = createUuid();
+        BigInteger id = createPlayerId();
+
+        when(repository.findById(id)).thenReturn(Optional.of(player));
+
+        PlayerDTO response = service.getPlayer(uuid, id).block();
+
+        assertNotNull(response);
+        assertEquals(player.getFirstName(), response.getFirstName());
+        assertEquals(player.getLastName(), response.getLastName());
+        assertEquals(player.getId(), response.getId());
+        assertEquals(player.getServer(), response.getServer());
+        assertEquals(player.getJob(), response.getJob());
+    }
+
+    @Test
+    public void testGetPlayer_DoesNotExistFail(){
+        String uuid = createUuid();
+        BigInteger id = createPlayerId();
+
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.getPlayer(uuid, id).block();
+        });
+
+        assertNotNull(exception);
+        assertEquals(Errors.PLAYER_NOT_EXIST.getCode(), exception.getCode());
+        assertEquals(Errors.PLAYER_NOT_EXIST.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void testGetPlayer_RuntimeFail(){
+        String uuid = createUuid();
+        BigInteger id = createPlayerId();
+
+        when(repository.findById(id)).thenThrow(new RuntimeException());
+
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.getPlayer(uuid, id).block();
         });
 
         assertNotNull(exception);
