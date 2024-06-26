@@ -1,6 +1,7 @@
 package com.project.toy_player_service.util;
 
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
 import com.project.toy_player_service.entity.Player;
@@ -45,6 +46,16 @@ public class MapperUtil {
                 .code(success.getCode())
                 .message(success.getMessage())
                 .total(total)
+                .build();
+    }
+
+    public static PlayerDTO toPlayerDTO(Player player) {
+        return PlayerDTO.builder()
+                .id(player.getId())
+                .firstName(player.getFirstName())
+                .lastName(player.getLastName())
+                .server(player.getServer())
+                .job(player.getJob())
                 .build();
     }
 }
