@@ -1,5 +1,23 @@
 # Changelog
 
+## Version v0.4.0 (2024-06-26)
+
+### Features
+
+- added endpoint for player detail (afb89270)
+- added mapper to PlayerDTO (5b1ab99e)
+- added a service for retrieving product detail given an id (e2ad0026)
+- added more error constants for product details (ad139c23)
+- added DTO for product details response (11a8ce8a)
+
+### Tests
+
+- added unit test for the new endpoint (5eae8de9)
+
+### Chores and tidying
+
+- added more commands in bash history (992c208c)
+
 ## Version v0.3.0 (2024-06-24)
 
 ### Features
