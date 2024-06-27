@@ -1,10 +1,13 @@
 package com.project.toy_player_service.service.impl;
 
+import java.math.BigInteger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
 import com.project.toy_player_service.enums.Errors;
@@ -54,5 +57,27 @@ public class PlayerServiceImpl implements PlayerService {
                 })
                 .map(total -> MapperUtil.toPlayerDeleteResponseDTO(total, Success.PLAYER_DELETE_SUCCESS))
                 .doOnNext(response -> log.info("X-Tracker: {} | Success in deleting players", uuid));
+    }
+
+    @Override
+    public Mono<PlayerDTO> getPlayer(String uuid, BigInteger id) throws GenericException {
+        log.info("X-Tracker: {} | Retrieving a player from database", uuid);
+        log.debug("X-Tracker: {} | request id: {}", id);
+
+        return Mono.fromCallable(() -> repository.findById(id))
+                .doOnError(error -> {
+                    log.error("X-Tracker: {} | specific exception: {}", uuid, error.getMessage());
+
+                    throw new GenericException(Errors.SERVICE_ERROR);
+                })
+                .map(optionalPlayer -> {
+                    if(optionalPlayer.isPresent()) {
+                        return MapperUtil.toPlayerDTO(optionalPlayer.get());
+                    } else {
+                        log.error("X-Tracker: {} |  exception: player does not exist", uuid);
+                        throw new GenericException(Errors.PLAYER_NOT_EXIST);
+                    }
+                })
+                .doOnNext(response -> log.info("X-Tracker: {} | Success in retrieving the player", uuid));
     }
 }
