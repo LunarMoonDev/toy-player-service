@@ -4,6 +4,8 @@ import java.math.BigInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,5 +51,11 @@ public class PlayerController {
     public Mono<ResponseEntity<PlayerDTO>> playerDetails(@RequestHeader("X-Tracker") String uuid,
             @PathVariable("player_id") BigInteger id) {
         return service.getPlayer(uuid, id).map(ResponseEntity::ok);
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<Page<PlayerDTO>>> playerList(@RequestHeader("X-Tracker") String uuid, Pageable paginate)
+            throws GenericException {
+        return service.playerList(uuid, paginate).map(ResponseEntity::ok);
     }
 }

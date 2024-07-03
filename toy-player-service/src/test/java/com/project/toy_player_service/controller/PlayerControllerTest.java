@@ -5,6 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -86,6 +91,10 @@ public class PlayerControllerTest {
         return BigInteger.ONE;
     }
 
+    private Pageable createPageable() {
+        return PageRequest.of(0, 10, Sort.by("sad"));
+    }
+
     // tests
     @Test
     public void testPostPlayer_Success() {
@@ -135,5 +144,21 @@ public class PlayerControllerTest {
         assertEquals(playerDTO.getId(), response.getBody().getId());
         assertEquals(playerDTO.getServer(), response.getBody().getServer());
         assertEquals(playerDTO.getJob(), response.getBody().getJob());
+    }
+
+    @Test
+    public void testPlayerList_Success() {
+        String uuid = createUuid();
+        Pageable page = createPageable();
+        PlayerDTO playerDTO = createPlayerDTO();
+        Page<PlayerDTO> playerList = new PageImpl<>(Collections.singletonList(playerDTO));
+
+        when(service.playerList(uuid, page)).thenReturn(Mono.just(playerList));
+
+        ResponseEntity<Page<PlayerDTO>> response = controller.playerList(uuid, page).block();
+
+        assertNotNull(response);
+        assertEquals(1, response.getBody().getSize());
+        assertEquals(1, response.getBody().getTotalPages());    
     }
 }
