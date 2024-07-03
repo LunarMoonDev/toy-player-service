@@ -1,5 +1,20 @@
 # Changelog
 
+## Version v0.5.0 (2024-07-03)
+
+### Features
+
+- Add endpoint for getting paginated player list (cbb1a041)
+- Add service for a paginated player list (2c31d746)
+
+### Tests
+
+- Create unit test for player list GET (4176345d)
+
+### Chores and tidying
+
+- Save more terminal commands used during development (b94ac92e)
+
 ## Version v0.4.0 (2024-06-26)
 
 ### Features
