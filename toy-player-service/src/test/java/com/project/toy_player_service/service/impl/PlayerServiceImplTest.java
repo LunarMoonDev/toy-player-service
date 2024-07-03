@@ -7,6 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -71,6 +76,10 @@ public class PlayerServiceImplTest {
 
     private BigInteger createPlayerId() {
         return BigInteger.ONE;
+    }
+
+    private Pageable createPageable() {
+        return PageRequest.of(0, 10, Sort.by("sad"));
     }
 
     // tests
@@ -194,6 +203,45 @@ public class PlayerServiceImplTest {
 
         GenericException exception = assertThrows(GenericException.class, () -> {
             service.getPlayer(uuid, id).block();
+        });
+
+        assertNotNull(exception);
+        assertEquals(Errors.SERVICE_ERROR.getCode(), exception.getCode());
+        assertEquals(Errors.SERVICE_ERROR.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void testPlayerList_Success(){
+        String uuid = createUuid();
+        Pageable page = createPageable();
+        Player player = createPlayer();
+        Page<Player> playerList = new PageImpl<>(Collections.singletonList(player));
+
+        when(repository.findAll(page)).thenReturn(playerList);
+
+        Page<PlayerDTO> response = service.playerList(uuid, page).block();
+
+        assertNotNull(response);
+        assertEquals(1, response.getSize());
+        assertEquals(1, response.getTotalPages());
+
+        PlayerDTO playerDTO = response.getContent().get(0);
+        assertEquals(player.getFirstName(), playerDTO.getFirstName());
+        assertEquals(player.getLastName(), playerDTO.getLastName());
+        assertEquals(player.getId(), playerDTO.getId());
+        assertEquals(player.getServer(), playerDTO.getServer());
+        assertEquals(player.getJob(), playerDTO.getJob());
+    }
+
+    @Test
+    public void testPlayerList_RuntimeFail(){
+        String uuid = createUuid();
+        Pageable page = createPageable();
+
+        when(repository.findAll(page)).thenThrow(new RuntimeException());
+
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            Page<PlayerDTO> response = service.playerList(uuid, page).block();
         });
 
         assertNotNull(exception);
