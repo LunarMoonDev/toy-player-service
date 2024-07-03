@@ -3,6 +3,8 @@ package com.project.toy_player_service.service.impl;
 import java.math.BigInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
@@ -71,7 +73,7 @@ public class PlayerServiceImpl implements PlayerService {
                     throw new GenericException(Errors.SERVICE_ERROR);
                 })
                 .map(optionalPlayer -> {
-                    if(optionalPlayer.isPresent()) {
+                    if (optionalPlayer.isPresent()) {
                         return MapperUtil.toPlayerDTO(optionalPlayer.get());
                     } else {
                         log.error("X-Tracker: {} |  exception: player does not exist", uuid);
@@ -79,5 +81,20 @@ public class PlayerServiceImpl implements PlayerService {
                     }
                 })
                 .doOnNext(response -> log.info("X-Tracker: {} | Success in retrieving the player", uuid));
+    }
+
+    @Override
+    public Mono<Page<PlayerDTO>> playerList(String uuid, Pageable paginate) throws GenericException {
+        log.info("X-Tracker: {} | Retrieving players from database", uuid);
+        log.debug("X-Tracker: {} | request payload: {}", paginate);
+
+        return Mono.fromCallable(() -> repository.findAll(paginate))
+            .map(page -> page.map(player -> MapperUtil.toPlayerDTO(player)))
+            .doOnError(error -> {
+                log.error("X-Tracker: {} | specific exception: {}", uuid, error.getMessage());
+
+                throw new GenericException(Errors.SERVICE_ERROR);
+            })
+            .doOnNext(response -> log.info("X-Tracker: {} | Success in retrieving players", uuid));
     }
 }
