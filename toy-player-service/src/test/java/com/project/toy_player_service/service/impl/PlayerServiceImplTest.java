@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.request.PlayerUpdateRequestDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
@@ -48,6 +49,7 @@ public class PlayerServiceImplTest {
     // mocks
     private Player createPlayer() {
         return Player.builder()
+                .id(BigInteger.ONE)
                 .firstName("first")
                 .lastName("last")
                 .job("job")
@@ -80,6 +82,16 @@ public class PlayerServiceImplTest {
 
     private Pageable createPageable() {
         return PageRequest.of(0, 10, Sort.by("sad"));
+    }
+
+    private PlayerUpdateRequestDTO createPlayerUpdateRequestDTO() {
+        return PlayerUpdateRequestDTO.builder()
+                .firstName("first")
+                .lastName("last")
+                .id(createPlayerId())
+                .job("job")
+                .server("server")
+                .build();
     }
 
     // tests
@@ -121,12 +133,13 @@ public class PlayerServiceImplTest {
 
         when(repository.save(any(Player.class))).thenThrow(new RuntimeException("non-uniq"));
 
-        RuntimeException exception = assertThrows(RuntimeException.class,() -> {
+        GenericException exception = assertThrows(GenericException.class,() -> {
             service.createPlayer(uuid, requestDTO).block();
         });
 
         assertNotNull(exception);
-        assertEquals("non-uniq", exception.getMessage());
+        assertEquals(Errors.SERVICE_ERROR.getCode(), exception.getCode());
+        assertEquals(Errors.SERVICE_ERROR.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -247,5 +260,57 @@ public class PlayerServiceImplTest {
         assertNotNull(exception);
         assertEquals(Errors.SERVICE_ERROR.getCode(), exception.getCode());
         assertEquals(Errors.SERVICE_ERROR.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void testUpdatePlayer_Success() {
+        String uuid = createUuid();
+        PlayerUpdateRequestDTO payload = createPlayerUpdateRequestDTO();
+        Player player = createPlayer();
+
+        when(repository.getReferenceById(payload.getId())).thenReturn(player);
+
+        PlayerDTO response = service.updatePlayer(uuid, payload).block();
+
+        assertNotNull(response);
+        assertEquals(payload.getFirstName(), response.getFirstName());
+        assertEquals(payload.getLastName(), response.getLastName());
+        assertEquals(payload.getId(), response.getId());
+        assertEquals(payload.getServer(), response.getServer());
+        assertEquals(payload.getJob(), response.getJob());
+    }
+
+    @Test
+    public void testUpdatePlayer_RuntimeFail() {
+        String uuid = createUuid();
+        PlayerUpdateRequestDTO payload = createPlayerUpdateRequestDTO();
+        Player player = createPlayer();
+
+        when(repository.getReferenceById(payload.getId())).thenThrow(new RuntimeException());
+
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            PlayerDTO response = service.updatePlayer(uuid, payload).block();
+        });
+
+        assertNotNull(exception);
+        assertEquals(Errors.SERVICE_ERROR.getCode(), exception.getCode());
+        assertEquals(Errors.SERVICE_ERROR.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void testUpdatePlayer_DuplicateFail() {
+        String uuid = createUuid();
+        PlayerUpdateRequestDTO payload = createPlayerUpdateRequestDTO();
+        Player player = createPlayer();
+
+        when(repository.getReferenceById(payload.getId())).thenThrow(new RuntimeException("unique"));
+
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            PlayerDTO response = service.updatePlayer(uuid, payload).block();
+        });
+
+        assertNotNull(exception);
+        assertEquals(Errors.PLAYER_DUPLICATE.getCode(), exception.getCode());
+        assertEquals(Errors.PLAYER_DUPLICATE.getMessage(), exception.getMessage());
     }
 }

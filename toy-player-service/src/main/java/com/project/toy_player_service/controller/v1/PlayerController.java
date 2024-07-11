@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.request.PlayerUpdateRequestDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
@@ -26,6 +27,7 @@ import com.project.toy_player_service.service.PlayerService;
 import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController("PlayerControllerV1")
@@ -57,5 +59,11 @@ public class PlayerController {
     public Mono<ResponseEntity<Page<PlayerDTO>>> playerList(@RequestHeader("X-Tracker") String uuid, Pageable paginate)
             throws GenericException {
         return service.playerList(uuid, paginate).map(ResponseEntity::ok);
+    }
+
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<PlayerDTO>> updatePlayer(@RequestHeader("X-Tracker") String uuid,
+            @RequestBody @Valid PlayerUpdateRequestDTO payload) throws GenericException {
+        return service.updatePlayer(uuid, payload).map(ResponseEntity::ok);
     }
 }

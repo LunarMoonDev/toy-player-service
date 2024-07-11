@@ -1,6 +1,9 @@
 package com.project.toy_player_service.util;
 
+import java.util.Objects;
+
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.request.PlayerUpdateRequestDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
@@ -57,5 +60,26 @@ public class MapperUtil {
                 .server(player.getServer())
                 .job(player.getJob())
                 .build();
+    }
+
+    public static Player toPlayer(PlayerUpdateRequestDTO payload, Player player) {
+        
+        if(!Objects.isNull(payload.getFirstName())) {
+            player.setFirstName(payload.getFirstName());
+        }
+
+        if(!Objects.isNull(payload.getLastName())) {
+            player.setLastName(payload.getLastName());
+        }
+
+        if(!Objects.isNull(payload.getJob())) {
+            player.setJob(payload.getJob());
+        }
+
+        if(!Objects.isNull(payload.getServer())) {
+            player.setServer(payload.getServer());
+        }
+
+        return player;
     }
 }
