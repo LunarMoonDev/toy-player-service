@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 import com.project.toy_player_service.controller.v1.PlayerController;
 import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.request.PlayerUpdateRequestDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
@@ -73,14 +74,14 @@ public class PlayerControllerTest {
                 .build();
     }
 
-    private PlayerDTO createPlayerDTO(){
+    private PlayerDTO createPlayerDTO() {
         return PlayerDTO.builder()
-            .firstName("first")
-            .lastName("last")
-            .id(createPlayerId())
-            .job("job")
-            .server("server")
-            .build();
+                .firstName("first")
+                .lastName("last")
+                .id(createPlayerId())
+                .job("job")
+                .server("server")
+                .build();
     }
 
     private String createUuid() {
@@ -93,6 +94,16 @@ public class PlayerControllerTest {
 
     private Pageable createPageable() {
         return PageRequest.of(0, 10, Sort.by("sad"));
+    }
+
+    private PlayerUpdateRequestDTO createPlayerUpdateRequestDTO() {
+        return PlayerUpdateRequestDTO.builder()
+                .firstName("first2")
+                .lastName("last2")
+                .id(createPlayerId())
+                .job("job2")
+                .server("server2")
+                .build();
     }
 
     // tests
@@ -127,7 +138,6 @@ public class PlayerControllerTest {
         assertEquals(2, response.getBody().getTotal());
     }
 
-
     @Test
     public void testPlayerDetails_Success() {
         BigInteger id = createPlayerId();
@@ -159,6 +169,29 @@ public class PlayerControllerTest {
 
         assertNotNull(response);
         assertEquals(1, response.getBody().getSize());
-        assertEquals(1, response.getBody().getTotalPages());    
+        assertEquals(1, response.getBody().getTotalPages());
+    }
+
+    @Test
+    public void testPlayerUpdate_Success() {
+        String uuid = createUuid();
+        PlayerUpdateRequestDTO payload = createPlayerUpdateRequestDTO();
+        PlayerDTO playerDTO = createPlayerDTO();
+        playerDTO.setFirstName(payload.getFirstName());
+        playerDTO.setId(payload.getId());
+        playerDTO.setJob(payload.getJob());
+        playerDTO.setLastName(payload.getLastName());
+        playerDTO.setServer(payload.getServer());
+
+        when(service.updatePlayer(uuid, payload)).thenReturn(Mono.just(playerDTO));
+
+        ResponseEntity<PlayerDTO> response = controller.updatePlayer(uuid, payload).block();
+
+        assertNotNull(response);
+        assertEquals(payload.getFirstName(), response.getBody().getFirstName());
+        assertEquals(payload.getLastName(), response.getBody().getLastName());
+        assertEquals(payload.getId(), response.getBody().getId());
+        assertEquals(payload.getServer(), response.getBody().getServer());
+        assertEquals(payload.getJob(), response.getBody().getJob());
     }
 }
