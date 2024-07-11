@@ -1,5 +1,23 @@
 # Changelog
 
+## Version v0.6.0 (2024-07-11)
+
+### Features
+
+- Add endpoint for player update API (748edd07)
+- Add mapper to apply new data from player update API (dbfd9309)
+- Add service to update a player (3b11a922)
+- Add error constants for handling player update errors (63badbdd)
+- Add request DTO for player update API (974115bc)
+
+### Tests
+
+- Add more unit tests for the new endpoint (ff3d7bdc)
+
+### Chores and tidying
+
+- Save commands used during development of player update API (2e21a52a)
+
 ## Version v0.5.0 (2024-07-03)
 
 ### Features
