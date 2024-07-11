@@ -20,3 +20,8 @@ gradle cleanTest test
 gradle cleanTest test
 cd toy-player-service/
 gradle cleanTest test
+ /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_5l28oed6zqabyr6pz9wq3wiz.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ cd /app ; /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_54p7doalq74yvw8xy2wzo5wo.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ cd /app/toy-player-service ; /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_6ztzl54qw4sb7kr7227fhr677.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+cd toy-player-service/
+gradle cleanTest test
