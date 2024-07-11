@@ -1,6 +1,7 @@
 package com.project.toy_player_service.service.impl;
 
 import java.math.BigInteger;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.request.PlayerUpdateRequestDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
@@ -37,9 +39,11 @@ public class PlayerServiceImpl implements PlayerService {
                 .doOnError(error -> {
                     log.error("X-Tracker: {} | specific exception: {}", uuid, error.getMessage());
 
-                    if (error.getMessage().contains("unique")) {
+                    if (Objects.nonNull(error.getMessage()) && error.getMessage().contains("unique")) {
                         throw new GenericException(Errors.PLAYER_UNIQUE);
                     }
+
+                    throw new GenericException(Errors.SERVICE_ERROR);
                 })
                 .map(player -> MapperUtil.toPlayerResponseDTO(Success.PLAYER_CREATE_SUCCESS))
                 .doOnNext(response -> log.info("X-Tracker: {} | Success in creating player", uuid));
@@ -96,5 +100,26 @@ public class PlayerServiceImpl implements PlayerService {
                 throw new GenericException(Errors.SERVICE_ERROR);
             })
             .doOnNext(response -> log.info("X-Tracker: {} | Success in retrieving players", uuid));
+    }
+
+    @Override
+    public Mono<PlayerDTO> updatePlayer(String uuid, PlayerUpdateRequestDTO payload) throws GenericException {
+        log.info("X-Tracker: {} | Updating a player from database", uuid);
+        log.debug("X-Tracker: {} | request payload: {}", payload);
+
+        return Mono.fromCallable(() -> repository.getReferenceById(payload.getId()))
+            .map(player -> MapperUtil.toPlayer(payload, player))
+            .doOnNext(player -> repository.save(player))
+            .map(player -> MapperUtil.toPlayerDTO(player))
+            .doOnError(error -> {
+                log.error("X-Tracker: {} | specific exception: {}", uuid, error.getMessage());
+
+                if (Objects.nonNull(error.getMessage()) && error.getMessage().contains("unique")) {
+                    throw new GenericException(Errors.PLAYER_DUPLICATE);
+                }
+
+                throw new GenericException(Errors.SERVICE_ERROR);
+            })
+            .doOnNext(response -> log.info("X-Tracker: {} | Success in updating the player", uuid));
     }
 }

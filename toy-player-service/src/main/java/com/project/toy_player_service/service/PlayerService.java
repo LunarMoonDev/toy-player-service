@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.project.toy_player_service.dto.player.request.PlayerDeleteRequestDTO;
 import com.project.toy_player_service.dto.player.request.PlayerRequestDTO;
+import com.project.toy_player_service.dto.player.request.PlayerUpdateRequestDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDTO;
 import com.project.toy_player_service.dto.player.response.PlayerDeleteResponseDTO;
 import com.project.toy_player_service.dto.player.response.PlayerResponseDTO;
@@ -22,4 +23,6 @@ public interface PlayerService {
     Mono<PlayerDTO> getPlayer(String uuid, BigInteger id) throws GenericException;
 
     Mono<Page<PlayerDTO>> playerList(String uuid, Pageable paginate) throws GenericException;
+
+    Mono<PlayerDTO> updatePlayer(String uuid, PlayerUpdateRequestDTO payload) throws GenericException;
 }
