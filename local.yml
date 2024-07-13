@@ -19,8 +19,6 @@ services:
         USER_GID: 1019
     image: toy_player_service_java
     container_name: toy_player_service_java
-    depends_on:
-      - mysql
     volumes:
       - .:/app:z
       - local_gradle_dependencies:/home/vscode/.gradle/caches
@@ -31,17 +29,10 @@ services:
     ports:
       - '8080:8080'
     command: ["sleep", "infinity"]
+    networks:
+      - project-network
 
-  mysql:
-    build:
-      context: .
-      dockerfile: ./compose/production/mysql/Dockerfile
-    image: parse_logs_local_mysql
-    container_name: parse_logs_local_mysql
-    volumes:
-      - local_data:/var/lib/mysql
-      - local_backups:/backups
-    ports:
-      - '3306:3306'
-    env_file:
-      - ./.envs/.local/.mysql
+networks:
+  project-network:
+    name: parse-network
+    external: true
