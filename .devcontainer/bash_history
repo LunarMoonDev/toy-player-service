@@ -25,3 +25,14 @@ gradle cleanTest test
  cd /app/toy-player-service ; /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_6ztzl54qw4sb7kr7227fhr677.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
 cd toy-player-service/
 gradle cleanTest test
+ /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_5855obiam0n28egazazmo58eo.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ cd /app ; /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_54p7doalq74yvw8xy2wzo5wo.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_d439sczn7vbckyz0z0d5hp3b8.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ cd /app ; /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_54p7doalq74yvw8xy2wzo5wo.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_6w6917hpz3ig7hxa7dy4339vb.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ cd /app/toy-player-service ; /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_6w6917hpz3ig7hxa7dy4339vb.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ cd /app ; /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_54p7doalq74yvw8xy2wzo5wo.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ping google.com
+telnet google.com
+curl google.com
+ /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_2qfqh4bksnasunjnshmow1z66.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
