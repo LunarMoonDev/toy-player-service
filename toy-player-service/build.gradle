@@ -31,7 +31,7 @@ dependencies {
 }
 
 springBoot {
-  mainClass = 'com.project.toy_project_service.ToyPlayerServiceApplication'
+  mainClass = 'com.project.toy_player_service.ToyPlayerServiceApplication'
 }
 
 tasks.named('test') {
