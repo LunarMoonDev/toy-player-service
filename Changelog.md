@@ -1,5 +1,19 @@
 # Changelog
 
+## Version v0.6.1 (2024-07-13)
+
+### Refactoring
+
+- Change hostname of db in local properties (f5564f50)
+- Change mainclass path in build gradle (bb8a06b9)
+- Change hostname for PARSE_V1_DB_URL (0f749e32)
+- Delete mysql files (0b620898)
+- Remove mysql in docker compose (e1c7d08b)
+
+### Chores and tidying
+
+- Save commands used from development (fff2187b)
+
 ## Version v0.6.0 (2024-07-11)
 
 ### Features
