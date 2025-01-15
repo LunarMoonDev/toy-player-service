@@ -36,3 +36,6 @@ ping google.com
 telnet google.com
 curl google.com
  /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_2qfqh4bksnasunjnshmow1z66.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+ /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_5s6sopczofhrs3saj1l0z2b3q.argfile com.project.toy_player_service.ToyPlayerServiceApplication 
+eportreport
+ cd /app/toy-player-service ; /usr/bin/env /usr/java/openjdk-17/bin/java @/tmp/cp_5s6sopczofhrs3saj1l0z2b3q.argfile com.project.toy_player_service.ToyPlayerServiceApplication 

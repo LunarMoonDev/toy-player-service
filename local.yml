@@ -1,8 +1,6 @@
 version: '3'
 
 volumes:
-  local_data: {}
-  local_backups: {}
   local_gradle_dependencies: {}
   root_gradle_dependencies: {}
   local_vscode_extensions: {}
