@@ -1,5 +1,11 @@
 # Changelog
 
+## Version v0.6.2 (2025-01-15)
+
+### Chores and tidying
+
+- keeping main up to date (47b4a14a)
+
 ## Version v0.6.1 (2024-07-13)
 
 ### Refactoring
